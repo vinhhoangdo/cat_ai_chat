@@ -1,4 +1,5 @@
 import 'package:cat_ai_gen/config/dependencies.dart';
+import 'package:cat_ai_gen/core/core.dart';
 import 'package:cat_ai_gen/firebase_options.dart';
 import 'package:cat_ai_gen/routing/routing.dart';
 import 'package:cat_ai_gen/utils/logging.dart';
@@ -69,6 +70,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerConfig: router(context.read()),
+      theme: AppTheme(context).theme(),
     );
   }
 }

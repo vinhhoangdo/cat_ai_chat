@@ -12,21 +12,19 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: RichText(
           text: TextSpan(
-            style: TextStyle(
-              fontSize: 18,
-            ),
+            style: Theme.of(context).textTheme.bodyLarge,
             children: [
               TextSpan(text: "Welcome "),
               TextSpan(
                 text: FirebaseAuth.instance.currentUser!.email,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
               TextSpan(text: " back!"),
-            ]
-          )
+            ],
+          ),
         ),
         centerTitle: false,
         actions: [
