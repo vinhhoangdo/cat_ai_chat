@@ -1,0 +1,10 @@
+{
+  "signIn": "Sign In",
+  "signUp": "Sign Up",
+  "welcomeBack": "Welcome back!",
+  "close": "Close",
+  "email": "Email",
+  "password": "Password",
+  "tryAgain": "Try again",
+  "failToSignOut": "Fail to Sign out"
+}

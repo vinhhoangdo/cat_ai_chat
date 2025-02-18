@@ -1,5 +1,7 @@
+import 'package:cat_ai_gen/core/core.dart';
 import 'package:cat_ai_gen/routing/routes.dart';
 import 'package:cat_ai_gen/ui/ui.dart';
+import 'package:cat_ai_gen/utils/utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -32,7 +34,7 @@ class _SignInScreenState extends State<SignInScreen> {
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Close'),
+              child: Text(context.locale.close),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -82,32 +84,38 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        spacing: 12.0,
-        children: [
-          TextField(
-            controller: _email,
-          ),
-          TextField(
-            controller: _password,
-            obscureText: true,
-          ),
-          ElevatedButton(
-            onPressed: () {
-              widget.viewModel.signIn.execute(
-                (_email.value.text, _password.value.text),
-              );
-            },
-            child: ListenableBuilder(
-                listenable: widget.viewModel.signIn,
-                builder: (context, child) {
-                  if (widget.viewModel.signIn.running) {
-                    return CircularProgressIndicator();
-                  }
-                  return Text("Sign In");
-                }),
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        child: Column(
+          spacing: 12.0,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomTextFormField(
+              controller: _email,
+              hintText: context.locale.email,
+            ),
+            CustomTextFormField(
+              controller: _password,
+              hintText: context.locale.password,
+              obscureText: true,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                widget.viewModel.signIn.execute(
+                  (_email.value.text, _password.value.text),
+                );
+              },
+              child: ListenableBuilder(
+                  listenable: widget.viewModel.signIn,
+                  builder: (context, child) {
+                    if (widget.viewModel.signIn.running) {
+                      return CircularProgressIndicator();
+                    }
+                    return Text(context.locale.signIn);
+                  }),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -128,7 +136,7 @@ class _SignInScreenState extends State<SignInScreen> {
         SnackBar(
           content: Text(widget.viewModel.signIn.result.toString()),
           action: SnackBarAction(
-            label: "Try again",
+            label: context.locale.tryAgain,
             onPressed: () => widget.viewModel.signIn.execute(
               (_email.value.text, _password.value.text),
             ),

@@ -1,63 +1,26 @@
+import 'package:cat_ai_gen/app.dart';
 import 'package:cat_ai_gen/config/dependencies.dart';
-import 'package:cat_ai_gen/core/core.dart';
+import 'package:cat_ai_gen/data/data.dart';
 import 'package:cat_ai_gen/firebase_options.dart';
+import 'package:cat_ai_gen/l10n/gen_l10n/app_localizations.dart';
 import 'package:cat_ai_gen/routing/routing.dart';
-import 'package:cat_ai_gen/utils/logging.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:provider/provider.dart';
 
-Future<void> _grantPermission() async {
-  final messaging = FirebaseMessaging.instance;
-
-  final settings = await messaging.requestPermission(
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
-
-  if (kDebugMode) {
-    print('Permission granted: ${settings.authorizationStatus}');
-  }
-}
-
-Future<void> _fcmRegistration() async {
-  const vapidKey =
-      "BAa86ysT85eE-V4dBoSySRhGB5PMNQeomGbrAd2FGkM5NxoSIEbz3WTrYFxM9cSct-3OTIWZ6EOX9I-FnHVilHA";
-
-  // use the registration token to send messages to users from your trusted server environment
-  String? token;
-
-  if (DefaultFirebaseOptions.currentPlatform == DefaultFirebaseOptions.web) {
-    token = await FirebaseMessaging.instance.getToken(
-      vapidKey: vapidKey,
-    );
-    logging.i('Registration Web Token=$token');
-  } else {
-    token = await FirebaseMessaging.instance.getToken();
-    logging.i('Registration Token=$token');
-  }
-}
-
 void main() async {
+  await initLocator();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await _grantPermission();
-  await _fcmRegistration();
+  await NotificationService.init();
   usePathUrlStrategy();
   runApp(
     MultiProvider(
       providers: providers,
-      child: const MyApp(),
+      child: App(child: const MyApp()),
     ),
   );
 }
@@ -67,10 +30,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: router(context.read()),
-      theme: AppTheme(context).theme(),
+    return Consumer<ThemeRepository>(
+      builder: (context, notifier, child) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          routerConfig: router(context.read()),
+          theme: notifier.themeData,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+        );
+      },
     );
   }
 }

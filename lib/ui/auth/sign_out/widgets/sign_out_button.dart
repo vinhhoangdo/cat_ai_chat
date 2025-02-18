@@ -1,4 +1,5 @@
 import 'package:cat_ai_gen/ui/ui.dart';
+import 'package:cat_ai_gen/utils/extensions.dart';
 import 'package:flutter/material.dart';
 
 class SignOutButton extends StatefulWidget {
@@ -43,14 +44,13 @@ class _SignOutButtonState extends State<SignOutButton> {
   void _onResult() {
     // We do not need to navigate to `/login` on logout,
     // it is done automatically by GoRouter.
-
     if (widget.viewModel.signOut.error) {
       widget.viewModel.signOut.clearResult();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Fail to Sign out"),
+          content: Text(context.locale.failToSignOut),
           action: SnackBarAction(
-            label: "Try Again",
+            label: context.locale.tryAgain,
             onPressed: widget.viewModel.signOut.execute,
           ),
         ),

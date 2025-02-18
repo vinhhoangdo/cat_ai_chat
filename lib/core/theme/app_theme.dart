@@ -2,10 +2,6 @@ import 'package:cat_ai_gen/utils/extensions.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  final BuildContext context;
-
-  const AppTheme(this.context);
-
   static const _lightScheme = ColorScheme(
     brightness: Brightness.light,
     primary: Color(0xff640065),
@@ -104,17 +100,14 @@ class AppTheme {
     surfaceContainerHighest: Color(0xff3b3239),
   );
 
-  /// Theme configs
-  ThemeData theme() {
-    final brightness = View.of(context).platformDispatcher.platformBrightness;
-    final scheme = brightness == Brightness.light ? _lightScheme : _darkScheme;
+  /// ThemeData configs
+  static ThemeData _theme(ColorScheme scheme) {
     return ThemeData(
       useMaterial3: true,
       brightness: scheme.brightness,
       colorScheme: scheme,
       textTheme: TextTheme()
           .createTextTheme(
-            context,
             "Roboto",
             "Roboto",
           )
@@ -126,4 +119,9 @@ class AppTheme {
       canvasColor: scheme.surface,
     );
   }
+
+  /// Light Theme
+  static ThemeData light() => _theme(_lightScheme);
+  /// Dark Theme
+  static ThemeData dark() => _theme(_darkScheme);
 }
