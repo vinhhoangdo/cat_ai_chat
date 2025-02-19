@@ -1,5 +1,3 @@
-// ignore: unused_import
-import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -9,7 +7,13 @@ class AppLocalizationsVi extends AppLocalizations {
   AppLocalizationsVi([String locale = 'vi']) : super(locale);
 
   @override
+  String get appName => 'CatieTalk';
+
+  @override
   String get signIn => 'Sign In';
+
+  @override
+  String get signInWithGoogle => 'Sign In With Google';
 
   @override
   String get signUp => 'Sign Up';
@@ -31,4 +35,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get failToSignOut => 'Fail to Sign out';
+
+  @override
+  String get termAndPrivacy => 'Terms of use. Privacy policy';
 }

@@ -1,10 +1,12 @@
 import 'package:cat_ai_gen/core/core.dart';
 import 'package:cat_ai_gen/routing/routes.dart';
+import 'package:cat_ai_gen/ui/auth/sign_in/helper/sign_in_validator.dart';
 import 'package:cat_ai_gen/ui/ui.dart';
 import 'package:cat_ai_gen/utils/utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key, required this.viewModel});
@@ -15,9 +17,10 @@ class SignInScreen extends StatefulWidget {
   State<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignInScreenState extends State<SignInScreen> with SignInValidator {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   Future<void> _dialogBuilder({
     required String title,
@@ -54,6 +57,7 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    //TODO (vince): Remove it later!
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (message.notification != null) {
         if (mounted) {
@@ -84,37 +88,80 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        child: Column(
-          spacing: 12.0,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomTextFormField(
-              controller: _email,
-              hintText: context.locale.email,
-            ),
-            CustomTextFormField(
-              controller: _password,
-              hintText: context.locale.password,
-              obscureText: true,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                widget.viewModel.signIn.execute(
-                  (_email.value.text, _password.value.text),
-                );
-              },
-              child: ListenableBuilder(
-                  listenable: widget.viewModel.signIn,
-                  builder: (context, child) {
-                    if (widget.viewModel.signIn.running) {
-                      return CircularProgressIndicator();
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              spacing: 12.0,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  context.locale.appName,
+                  style: GoogleFonts.darumadropOne(
+                      textStyle: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: 45,
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  )),
+                ),
+                CatTextFormField(
+                  controller: _email,
+                  hintText: context.locale.email,
+                  validator: emailValidate,
+                ),
+                CatTextFormField(
+                  controller: _password,
+                  hintText: context.locale.password,
+                  obscureText: true,
+                  validator: passwordValidate,
+                ),
+                CatButton(
+                  type: ButtonType.outlined,
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      widget.viewModel.signIn.execute(
+                        (_email.value.text, _password.value.text),
+                      );
                     }
-                    return Text(context.locale.signIn);
-                  }),
+                  },
+                  child: ListenableBuilder(
+                    listenable: widget.viewModel.signIn,
+                    builder: (context, child) {
+                      if (widget.viewModel.signIn.running) {
+                        return CircularProgressIndicator();
+                      }
+                      return Text(
+                        context.locale.signIn.toUpperCase(),
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      );
+                    },
+                  ),
+                ),
+                CatButton(
+                  onPressed: () {
+                    widget.viewModel.signInWithGoogle.execute();
+                  },
+                  type: ButtonType.elevated,
+                  child: Text(
+                    context.locale.signInWithGoogle,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+                Text(context.locale.termAndPrivacy),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -137,9 +184,13 @@ class _SignInScreenState extends State<SignInScreen> {
           content: Text(widget.viewModel.signIn.result.toString()),
           action: SnackBarAction(
             label: context.locale.tryAgain,
-            onPressed: () => widget.viewModel.signIn.execute(
-              (_email.value.text, _password.value.text),
-            ),
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                widget.viewModel.signIn.execute(
+                  (_email.value.text, _password.value.text),
+                );
+              }
+            },
           ),
         ),
       );

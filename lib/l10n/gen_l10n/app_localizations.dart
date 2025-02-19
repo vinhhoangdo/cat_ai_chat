@@ -95,11 +95,23 @@ abstract class AppLocalizations {
     Locale('vi')
   ];
 
+  /// No description provided for @appName.
+  ///
+  /// In en, this message translates to:
+  /// **'CatieTalk'**
+  String get appName;
+
   /// No description provided for @signIn.
   ///
   /// In en, this message translates to:
   /// **'Sign In'**
   String get signIn;
+
+  /// No description provided for @signInWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In With Google'**
+  String get signInWithGoogle;
 
   /// No description provided for @signUp.
   ///
@@ -142,6 +154,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Fail to Sign out'**
   String get failToSignOut;
+
+  /// No description provided for @termAndPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of use. Privacy policy'**
+  String get termAndPrivacy;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

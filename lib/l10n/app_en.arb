@@ -1,10 +1,13 @@
 {
+  "appName": "CatieTalk",
   "signIn": "Sign In",
+  "signInWithGoogle": "Sign In With Google",
   "signUp": "Sign Up",
   "welcomeBack": "Welcome back!",
   "close": "Close",
   "email": "Email",
   "password": "Password",
   "tryAgain": "Try again",
-  "failToSignOut": "Fail to Sign out"
+  "failToSignOut": "Fail to Sign out",
+  "termAndPrivacy": "Terms of use. Privacy policy"
 }

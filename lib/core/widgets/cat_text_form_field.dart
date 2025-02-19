@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class CustomTextFormField extends StatelessWidget {
-  const CustomTextFormField({
+class CatTextFormField extends StatelessWidget {
+  const CatTextFormField({
     super.key,
     required this.controller,
     this.label,
@@ -100,6 +100,7 @@ class CustomTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: validator,
       onChanged: onChanged,
       onTap: onTap,
