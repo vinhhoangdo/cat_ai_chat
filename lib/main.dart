@@ -4,17 +4,18 @@ import 'package:cat_ai_gen/data/data.dart';
 import 'package:cat_ai_gen/firebase_options.dart';
 import 'package:cat_ai_gen/l10n/gen_l10n/app_localizations.dart';
 import 'package:cat_ai_gen/routing/routing.dart';
+import 'package:cat_ai_gen/utils/utils.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  await initLocator();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await initLocator();
   await NotificationService.init();
   usePathUrlStrategy();
   runApp(
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
     return Consumer<ThemeRepository>(
       builder: (context, notifier, child) {
         return MaterialApp.router(
+          scrollBehavior: CatScrollBehavior(),
           debugShowCheckedModeBanner: false,
           routerConfig: router(context.read()),
           theme: notifier.themeData,

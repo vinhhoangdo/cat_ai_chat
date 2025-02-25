@@ -8,26 +8,26 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: RichText(
-          text: TextSpan(
-            style: Theme.of(context).textTheme.bodyLarge,
-            children: [
-              TextSpan(text: "Welcome "),
-              TextSpan(
-                text: FirebaseAuth.instance.currentUser!.email,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              TextSpan(text: " back!"),
-            ],
+    return SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          RichText(
+            text: TextSpan(
+              style: Theme.of(context).textTheme.bodyLarge,
+              children: [
+                TextSpan(text: "Welcome "),
+                TextSpan(
+                  text: FirebaseAuth.instance.currentUser!.email,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                TextSpan(text: " back!"),
+              ],
+            ),
           ),
-        ),
-        centerTitle: false,
-        actions: [
           SignOutButton(
             viewModel: SignOutViewModel(
               authRepository: context.read(),

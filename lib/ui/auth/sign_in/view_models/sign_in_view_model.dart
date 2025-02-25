@@ -1,20 +1,26 @@
-import 'package:cat_ai_gen/data/repositories/auth/auth_repository.dart';
+import 'package:cat_ai_gen/data/data.dart';
 import 'package:cat_ai_gen/utils/utils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+typedef SignInArg = (String email, String password);
+typedef SignUpArg = (String email, String password, String name);
 
 class SignInViewModel {
   SignInViewModel({
     required AuthRepository authRepository,
   }) : _authRepository = authRepository {
-    signIn = CommandWithArg<String, (String email, String password)>(_signIn);
+    signIn = CommandWithArg(_signIn);
     signInWithGoogle = CommandNoneArg(_signInWithGoogle);
+    signUp = CommandWithArg(_signUp);
+    forgotPassword = CommandWithArg(_forgotPassword);
   }
 
   final AuthRepository _authRepository;
-  late CommandWithArg signIn;
+  late CommandWithArg<AuthStatus, SignInArg> signIn;
   late CommandNoneArg signInWithGoogle;
+  late CommandWithArg<AuthStatus, SignUpArg> signUp;
+  late CommandWithArg<AuthStatus, String> forgotPassword;
 
-  Future<Result<String>> _signIn((String, String) credentials) async {
+  Future<Result<AuthStatus>> _signIn(SignInArg credentials) async {
     final (email, password) = credentials;
     final result = await _authRepository.signIn(
       email: email,
@@ -23,7 +29,21 @@ class SignInViewModel {
     return result;
   }
 
-  Future<Result<UserCredential?>> _signInWithGoogle() async {
+  Future<Result<AuthStatus>> _signInWithGoogle() async {
     return await _authRepository.signInWithGoogle();
+  }
+
+  Future<Result<AuthStatus>> _signUp(SignUpArg credentials) async {
+    final (email, password, name) = credentials;
+    return await _authRepository.signUp(
+      email: email,
+      password: password,
+      name: name,
+    );
+  }
+
+  Future<Result<AuthStatus>> _forgotPassword(String email) async {
+    final result = await _authRepository.forgotPassword(email: email);
+    return result;
   }
 }

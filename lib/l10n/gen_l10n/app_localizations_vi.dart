@@ -19,6 +19,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get signUp => 'Sign Up';
 
   @override
+  String get signOut => 'Sign Out';
+
+  @override
   String get welcomeBack => 'Welcome back!';
 
   @override

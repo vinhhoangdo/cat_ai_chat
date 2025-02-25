@@ -1,3 +1,4 @@
+import 'package:cat_ai_gen/core/core.dart';
 import 'package:cat_ai_gen/ui/ui.dart';
 import 'package:cat_ai_gen/utils/extensions.dart';
 import 'package:flutter/material.dart';
@@ -33,11 +34,12 @@ class _SignOutButtonState extends State<SignOutButton> {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
+    return CatButton(
+      type: ButtonType.outlined,
       onPressed: () {
         widget.viewModel.signOut.execute();
       },
-      icon: Icon(Icons.logout),
+      child: Text(context.locale.signOut),
     );
   }
 

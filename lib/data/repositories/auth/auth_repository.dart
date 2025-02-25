@@ -1,9 +1,12 @@
+import 'package:cat_ai_gen/config/dependencies.dart';
+import 'package:cat_ai_gen/data/services/services.dart';
 import 'package:cat_ai_gen/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthRepository extends ChangeNotifier {
+  final _service = locator.get<AuthService>();
+
   Stream<User?> get authStateChanges =>
       FirebaseAuth.instance.authStateChanges();
 
@@ -11,75 +14,52 @@ class AuthRepository extends ChangeNotifier {
     return FirebaseAuth.instance.currentUser != null;
   }
 
-  Future<Result<String>> signIn({
+  Future<Result<AuthStatus>> signIn({
     required String email,
     required String password,
   }) async {
     try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
+      return await _service.signIn(email: email, password: password);
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<Result<AuthStatus>> signInWithGoogle() async {
+    try {
+      return await _service.signInWithGoogle();
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<Result<AuthStatus>> signUp({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    try {
+      return await _service.signUp(
         email: email,
         password: password,
+        name: name,
       );
-      User? user = userCredential.user;
-      logging.i("Welcome ${user!.email} back!");
-      return Result.ok("Welcome back!");
-    } on FirebaseAuthException catch (e) {
-      logging.e("Error: $e");
-      return Result.error("${e.message} Please try again!");
     } finally {
       notifyListeners();
     }
   }
 
-  Future<Result<UserCredential?>> signInWithGoogle() async {
+  Future<Result<AuthStatus>> forgotPassword({required String email}) async {
     try {
-      if (kIsWeb) {
-        // Create a new provider
-        GoogleAuthProvider googleProvider = GoogleAuthProvider();
-
-        googleProvider
-            .addScope('https://www.googleapis.com/auth/contacts.readonly');
-        googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
-
-        // Once signed in, return the UserCredential
-        return Result.ok(
-          await FirebaseAuth.instance.signInWithPopup(googleProvider),
-        );
-      }
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
-
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
-      );
-
-      // Once signed in, return the UserCredential
-      return Result.ok(
-        await FirebaseAuth.instance.signInWithCredential(credential),
-      );
-    } catch (e) {
-      logging.e(e.toString());
-      return Result.error(null);
+      return await _service.forgotPassword(email: email);
     } finally {
       notifyListeners();
     }
   }
 
-  Future<Result<bool>> signOut() async {
+  Future<Result<void>> signOut() async {
     try {
-      await FirebaseAuth.instance.signOut();
-      logging.i("See you soon!");
-      return Result.ok(true);
-    } catch (e) {
-      logging.e("Oops! $e");
-      return Result.error(false);
+      return await _service.signOut();
     } finally {
       notifyListeners();
     }

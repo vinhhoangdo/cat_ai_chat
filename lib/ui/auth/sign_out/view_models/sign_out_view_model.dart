@@ -10,11 +10,8 @@ class SignOutViewModel {
   final AuthRepository _authRepository;
   late CommandNoneArg signOut;
 
-  Future<Result> _signOut() async {
-    try {
-      return Result.ok(await _authRepository.signOut());
-    } catch (_) {
-      return Result.error(false);
-    }
+  Future<Result<void>> _signOut() async {
+    await _authRepository.signOut();
+    return Result.ok(null);
   }
 }

@@ -119,6 +119,12 @@ abstract class AppLocalizations {
   /// **'Sign Up'**
   String get signUp;
 
+  /// No description provided for @signOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Out'**
+  String get signOut;
+
   /// No description provided for @welcomeBack.
   ///
   /// In en, this message translates to:

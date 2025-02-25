@@ -1,9 +1,12 @@
+import 'package:cat_ai_gen/config/assets.dart';
 import 'package:cat_ai_gen/core/core.dart';
 import 'package:cat_ai_gen/routing/routes.dart';
 import 'package:cat_ai_gen/ui/auth/sign_in/helper/sign_in_validator.dart';
 import 'package:cat_ai_gen/ui/ui.dart';
 import 'package:cat_ai_gen/utils/utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,6 +24,7 @@ class _SignInScreenState extends State<SignInScreen> with SignInValidator {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final CarouselController controller = CarouselController(initialItem: 1);
 
   Future<void> _dialogBuilder({
     required String title,
@@ -82,88 +86,152 @@ class _SignInScreenState extends State<SignInScreen> with SignInValidator {
     widget.viewModel.signIn.removeListener(_onResult);
     _email.dispose();
     _password.dispose();
+    controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              spacing: 12.0,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  context.locale.appName,
-                  style: GoogleFonts.darumadropOne(
-                      textStyle: TextStyle(
-                    fontStyle: FontStyle.italic,
-                    fontSize: 45,
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  )),
-                ),
-                CatTextFormField(
-                  controller: _email,
-                  hintText: context.locale.email,
-                  validator: emailValidate,
-                ),
-                CatTextFormField(
-                  controller: _password,
-                  hintText: context.locale.password,
-                  obscureText: true,
-                  validator: passwordValidate,
-                ),
-                CatButton(
-                  type: ButtonType.outlined,
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      widget.viewModel.signIn.execute(
-                        (_email.value.text, _password.value.text),
-                      );
-                    }
-                  },
-                  child: ListenableBuilder(
-                    listenable: widget.viewModel.signIn,
-                    builder: (context, child) {
-                      if (widget.viewModel.signIn.running) {
-                        return CircularProgressIndicator();
+      body: Stack(
+        alignment: AlignmentDirectional.center,
+        children: [
+          if (kIsWeb)
+            CarouselView.weighted(
+              controller: controller,
+              itemSnapping: true,
+              consumeMaxWeight: false,
+              flexWeights: [2, 7, 2],
+              children: AppAssets.onboards.map<Widget>((asset) {
+                return Image.asset(
+                  asset,
+                  fit: BoxFit.cover,
+                );
+              }).toList(),
+            ),
+          Positioned(
+            bottom: 10,
+            child: CatButton(
+              onPressed: () async {
+                await _showSignInDialog();
+              },
+              type: ButtonType.elevated,
+              child: Text("Let's start"),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget adaptiveAction({
+    required BuildContext context,
+    required VoidCallback onPressed,
+    required Widget child,
+  }) {
+    final ThemeData theme = Theme.of(context);
+    switch (theme.platform) {
+      case TargetPlatform.android:
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.windows:
+        return TextButton(onPressed: onPressed, child: child);
+      case TargetPlatform.iOS:
+      case TargetPlatform.macOS:
+        return CupertinoDialogAction(onPressed: onPressed, child: child);
+    }
+  }
+
+  Future<void> _showSignInDialog() async {
+    await showAdaptiveDialog(
+      context: context,
+      builder: (context) {
+        return Material(
+          type: MaterialType.transparency,
+          child: AlertDialog.adaptive(
+            surfaceTintColor: Theme.of(context).colorScheme.surface,
+            contentPadding: EdgeInsets.all(24.0),
+            actions: <Widget>[
+              adaptiveAction(
+                context: context,
+                onPressed: () => Navigator.pop(context, 'Cancel'),
+                child: const Text('Cancel'),
+              ),
+            ],
+            content: Form(
+              key: _formKey,
+              child: Column(
+                spacing: 12.0,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    context.locale.appName,
+                    style: GoogleFonts.darumadropOne(
+                        textStyle: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 45,
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    )),
+                  ),
+                  CatTextFormField(
+                    controller: _email,
+                    hintText: context.locale.email,
+                    validator: emailValidate,
+                  ),
+                  CatTextFormField(
+                    controller: _password,
+                    hintText: context.locale.password,
+                    obscureText: true,
+                    validator: passwordValidate,
+                  ),
+                  CatButton(
+                    type: ButtonType.outlined,
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        widget.viewModel.signIn.execute(
+                          (_email.value.text, _password.value.text),
+                        );
                       }
-                      return Text(
-                        context.locale.signIn.toUpperCase(),
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      );
                     },
+                    child: ListenableBuilder(
+                      listenable: widget.viewModel.signIn,
+                      builder: (context, child) {
+                        if (widget.viewModel.signIn.running) {
+                          return CircularProgressIndicator();
+                        }
+                        return Text(
+                          context.locale.signIn.toUpperCase(),
+                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-                CatButton(
-                  onPressed: () {
-                    widget.viewModel.signInWithGoogle.execute();
-                  },
-                  type: ButtonType.elevated,
-                  child: Text(
-                    context.locale.signInWithGoogle,
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  CatButton(
+                    onPressed: () {
+                      widget.viewModel.signInWithGoogle.execute();
+                    },
+                    type: ButtonType.elevated,
+                    child: Text(
+                      context.locale.signInWithGoogle,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
                   ),
-                ),
-                Text(context.locale.termAndPrivacy),
-              ],
+                  Text(context.locale.termAndPrivacy),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
