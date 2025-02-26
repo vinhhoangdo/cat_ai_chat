@@ -25,8 +25,8 @@ GoRouter router(AuthRepository authRepository) {
       GoRoute(
         path: Routes.auth,
         builder: (context, state) {
-          return SignInScreen(
-            viewModel: SignInViewModel(
+          return AuthScreen(
+            signInViewModel: AuthViewModel(
               authRepository: context.read(),
             ),
           );

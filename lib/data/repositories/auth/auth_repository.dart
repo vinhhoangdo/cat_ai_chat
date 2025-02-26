@@ -4,6 +4,8 @@ import 'package:cat_ai_gen/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
+enum AuthMethod { signIn, signUp, forgotPassword }
+
 class AuthRepository extends ChangeNotifier {
   final _service = locator.get<AuthService>();
 
@@ -13,6 +15,10 @@ class AuthRepository extends ChangeNotifier {
   bool get isAuthenticated {
     return FirebaseAuth.instance.currentUser != null;
   }
+
+  AuthMethod _authMethod = AuthMethod.signIn;
+
+  AuthMethod get authMethod => _authMethod;
 
   Future<Result<AuthStatus>> signIn({
     required String email,
@@ -63,5 +69,10 @@ class AuthRepository extends ChangeNotifier {
     } finally {
       notifyListeners();
     }
+  }
+
+  void changeAuthMethod(AuthMethod method) {
+    _authMethod = method;
+    notifyListeners();
   }
 }

@@ -125,6 +125,12 @@ abstract class AppLocalizations {
   /// **'Sign Out'**
   String get signOut;
 
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get name;
+
   /// No description provided for @welcomeBack.
   ///
   /// In en, this message translates to:
@@ -161,11 +167,11 @@ abstract class AppLocalizations {
   /// **'Fail to Sign out'**
   String get failToSignOut;
 
-  /// No description provided for @termAndPrivacy.
+  /// No description provided for @doNotHaveAccount.
   ///
   /// In en, this message translates to:
-  /// **'Terms of use. Privacy policy'**
-  String get termAndPrivacy;
+  /// **'Don\'t have an account?'**
+  String get doNotHaveAccount;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

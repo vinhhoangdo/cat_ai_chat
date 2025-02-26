@@ -22,6 +22,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signOut => 'Sign Out';
 
   @override
+  String get name => 'Username';
+
+  @override
   String get welcomeBack => 'Welcome back!';
 
   @override
@@ -40,5 +43,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get failToSignOut => 'Fail to Sign out';
 
   @override
-  String get termAndPrivacy => 'Terms of use. Privacy policy';
+  String get doNotHaveAccount => 'Don\'t have an account?';
 }

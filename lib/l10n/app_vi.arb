@@ -4,11 +4,12 @@
   "signInWithGoogle": "Sign In With Google",
   "signUp": "Sign Up",
   "signOut": "Sign Out",
+  "name": "Username",
   "welcomeBack": "Welcome back!",
   "close": "Close",
   "email": "Email",
   "password": "Password",
   "tryAgain": "Try again",
   "failToSignOut": "Fail to Sign out",
-  "termAndPrivacy": "Terms of use. Privacy policy"
+  "doNotHaveAccount": "Don't have an account?"
 }

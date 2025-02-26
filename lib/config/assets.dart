@@ -3,8 +3,8 @@ class AppAssets {
 
   static const onboards = [
     imgGptOnboard,
-    imgWelcomeOnboard,
     imgPhoneOnboard,
+    imgWelcomeOnboard,
     imgGptOnboard,
   ];
 

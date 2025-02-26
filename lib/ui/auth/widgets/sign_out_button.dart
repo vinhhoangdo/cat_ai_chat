@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class SignOutButton extends StatefulWidget {
   const SignOutButton({super.key, required this.viewModel});
 
-  final SignOutViewModel viewModel;
+  final AuthViewModel viewModel;
 
   @override
   State<SignOutButton> createState() => _SignOutButtonState();

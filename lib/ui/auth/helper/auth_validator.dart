@@ -1,4 +1,4 @@
-mixin SignInValidator {
+mixin AuthValidator {
   String? emailValidate(String? value) {
     if(value == null || value.isEmpty) {
       return "The Email is required!";

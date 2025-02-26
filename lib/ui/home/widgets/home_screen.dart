@@ -29,7 +29,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           SignOutButton(
-            viewModel: SignOutViewModel(
+            viewModel: AuthViewModel(
               authRepository: context.read(),
             ),
           ),
